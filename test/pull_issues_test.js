@@ -165,6 +165,8 @@ it.skip('Pulls any issues', () => {
             status: pullIssues.convertIssueState('open'),
             url: 'https://github.com/PapageienTeam/integration-test/issues/1',
             github_id: 1,
+            assignee: 'mpt0',
+            creator: 'mpt0'
         });
     })
 })
@@ -184,8 +186,8 @@ it.skip('Finds all issues in an organization', () => {
             status: pullIssues.convertIssueState('open'),
             url: 'https://github.com/PapageienTeam/integration-test/issues/1',
             github_id: 1,
-            assignee: "mtp0",
-            creator: "mtp0",
+            assignee: "mpt0",
+            creator: "mpt0",
         });
     });
 })
