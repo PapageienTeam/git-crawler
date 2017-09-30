@@ -133,6 +133,28 @@ test('Converts multiple issues correctly', () => {
     expect(pullIssues.convertResponseToDTO(githubApiResponse)).toEqual(expectDTOs)
 })
 
+test('Finds all repos in an organization', () => {
+    const firstRepoName = "FirstRepo";
+    const secondRepoName = "SecondRepoName";
+    const thirdRepoName = "ThirdRepoName";
+    const githubApiResponse = [
+        {
+            name: firstRepoName
+        },
+        {
+            name: secondRepoName
+        },
+        {
+            name: thirdRepoName
+        },
+    ]
+
+    expect(pullIssues.findReposInOrganizationResponse(githubApiResponse)).toEqual([
+        firstRepoName,
+        secondRepoName,
+        thirdRepoName,
+    ]);
+})
 
 // Integration test that hits rate limits on Travis.
 it.skip('Pulls any issues', () => {
@@ -145,4 +167,25 @@ it.skip('Pulls any issues', () => {
             github_id: 1,
         });
     })
+})
+
+it.skip('Finds all repos in an organization', () => {
+    expect.assertions(1);
+    return pullIssues.findReposInOrganization(testConsts.TEST_ORGANIZATION).then( result => {
+        expect(result).toContain('integration-test');
+    });
+})
+
+it.skip('Finds all issues in an organization', () => {
+    expect.assertions(1);
+    return pullIssues.findAllIssuesInOrganization(testConsts.TEST_ORGANIZATION).then(result => {
+        expect(result[0]).toContainEqual({
+            title: "Flamingos sollten grün sein!",
+            status: pullIssues.convertIssueState('open'),
+            url: 'https://github.com/PapageienTeam/integration-test/issues/1',
+            github_id: 1,
+            assignee: "mtp0",
+            creator: "mtp0",
+        });
+    });
 })

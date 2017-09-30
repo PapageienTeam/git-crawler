@@ -49,7 +49,35 @@ function findAll (organization, repo) {
         });
 }
 
+function findReposInOrganizationResponse(githubResponse) {
+    const foundRepos = []
+    for (const repository of githubResponse) {
+        foundRepos.push(repository.name);
+    }
+    return foundRepos;
+}
+
+function findReposInOrganization(organizationName) {
+    const client = new GitHubApi({debug: false});
+    return client.repos.getForOrg({org: organizationName}).then(response => {
+        return findReposInOrganizationResponse(response.data);
+    });
+}
+
+function findAllIssuesInOrganization(organizationName) {
+    return findReposInOrganization(organizationName).then(async repos => {
+        const issues = [];
+        for (const repository of repos) {
+            issues.push(await findAll(organizationName, repository));
+        };
+        return issues;
+    });
+}
+
 module.exports.convertToDTO = convertToDTO;
 module.exports.findAll = findAll;
 module.exports.convertResponseToDTO = convertResponseToDTO;
 module.exports.convertIssueState = convertIssueState;
+module.exports.findReposInOrganizationResponse = findReposInOrganizationResponse;
+module.exports.findReposInOrganization = findReposInOrganization;
+module.exports.findAllIssuesInOrganization = findAllIssuesInOrganization;
