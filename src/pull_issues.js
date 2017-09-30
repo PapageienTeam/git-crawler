@@ -1,10 +1,21 @@
 'use strict';
 const GitHubApi = require('github');
 
+function convertIssueState(githubFormattedState) {
+    switch(githubFormattedState) {
+        case 'open':
+            return 0;
+        case 'closed':
+            return 1;
+        default:
+            throw new RangeError("The given state was not valid.")
+    }
+}
+
 function convertToDTO(issue) {
     return {
         title: issue.title,
-        status: issue.state,
+        status: convertIssueState(issue.state),
         url: issue.html_url,
         github_id: issue.number,
     }
@@ -29,3 +40,4 @@ function findAll (organization, repo) {
 module.exports.convertToDTO = convertToDTO;
 module.exports.findAll = findAll;
 module.exports.convertResponseToDTO = convertResponseToDTO;
+module.exports.convertIssueState = convertIssueState;

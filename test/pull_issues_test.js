@@ -1,8 +1,22 @@
 'use strict';
 
+//TODO: CONVERT "OPEN" TO 0
+
 const github = require('github')
 const pullIssues = require('../src/pull_issues')
 const testConsts = require('./test_consts')
+
+test('Converts open issue state correctly', () => {
+    expect(pullIssues.convertIssueState('open')).toBe(0);
+})
+
+test('Converts closed issue state correctly', () => {
+    expect(pullIssues.convertIssueState('closed')).toBe(1);
+})
+
+test('Throws exception on invalid issue state', () => {
+    expect(() => pullIssues.convertIssueState('INVALID')).toThrow();
+})
 
 test('Converts a single issue correctly', () => {
     const title = "I'm a bug!";
@@ -10,7 +24,7 @@ test('Converts a single issue correctly', () => {
     const githubState = "open";
     const idNumber = 5;
     const githubApiResponse = {number: idNumber, state: githubState, html_url: url, title: title}; 
-    const dto = {title: title, status: githubState, url: url, github_id: idNumber};
+    const dto = {title: title, status: pullIssues.convertIssueState(githubState), url: url, github_id: idNumber};
     expect(pullIssues.convertToDTO(githubApiResponse)).toEqual(dto);
 })
 
@@ -46,13 +60,13 @@ test('Converts multiple issues correctly', () => {
     const expectDTOs = [
         {
             title: firstTitle,
-            status: firstIssueState,
+            status: pullIssues.convertIssueState(firstIssueState),
             url: firstUrl,
             github_id: firstIssueNumber,
         },
         {
             title: secondTitle,
-            status: secondIssueState,
+            status: pullIssues.convertIssueState(secondIssueState),
             url: secondUrl,
             github_id: secondIssueNumber,
         }
@@ -66,7 +80,7 @@ it('Pulls any issues', () => {
     return pullIssues.findAll(testConsts.TEST_ORGANIZATION, testConsts.TEST_REPO).then(result => {
         expect(result).toContainEqual({
             title: "Flamingos sollten grün sein!",
-            status: 'open',
+            status: pullIssues.convertIssueState('open'),
             url: 'https://github.com/PapageienTeam/integration-test/issues/1',
             github_id: 1,
         });
