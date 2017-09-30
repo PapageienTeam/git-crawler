@@ -26,5 +26,8 @@
     },
     "testRegex": "./test/.*.js$",
     "rootDir": "."
+  },
+  "dependencies": {
+    "fs-extra": "^4.0.2"
   }
 }
