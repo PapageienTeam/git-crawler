@@ -1,7 +1,7 @@
 {
-  "name": "git-bot",
+  "name": "git-crawler",
   "version": "0.0.1",
-  "description": "Slack bot showing github issues",
+  "description": "Bot crawling github issues",
   "main": "src/main.js",
   "scripts": {
     "test": "jest",
@@ -28,6 +28,7 @@
     "rootDir": "."
   },
   "dependencies": {
+    "git-bot": "github:PapageienTeam/git-bot",
     "github": "^11.0.0"
   }
 }
