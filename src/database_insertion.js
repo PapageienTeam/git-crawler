@@ -8,13 +8,15 @@ async function nukeDatabase(database) {
 }
 
 async function insertIssuesIntoCleanDatabase(database) {
-    for (const issue in await pullIssues.findAllIssuesInOrganization(process.env.GIT_ORGANIZATION)) {
+    const issues = await pullIssues.findAllIssuesInOrganization(process.env.GIT_ORGANIZATION)
+    for (const issue of issues) {
         await database.issue.add(issue);
     }
 }
 
 async function nukeDatabaseAndWriteEverything(database) {
     await nukeDatabase(database);
+    await userMappingsHack.insertHardcodedMappings(database);
     await insertIssuesIntoCleanDatabase(database);
 }
 

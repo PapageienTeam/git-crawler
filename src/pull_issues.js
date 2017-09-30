@@ -5,7 +5,7 @@ const fsExtra = require('fs-extra');
 function getGithubApiContext() {
     const client = new GitHubApi({debug: false});
     const config = fsExtra.readJsonSync('./authentication.json');
-    client.authenticate({type: 'oauth', key: config.username, secret: config.PAT});
+    client.authenticate({type: 'oauth', token: config.token});
     return client;
 }
 
@@ -35,7 +35,7 @@ function convertToDTO(issue) {
         title: issue.title,
         status: convertIssueState(issue.state),
         url: issue.html_url,
-        github_id: issue.number,
+        github_id: parseInt(issue.number),
         creator: issue.user.login,
         assignee: findAssignee(issue),
     }
@@ -76,10 +76,16 @@ function findAllIssuesInOrganization(organizationName) {
     return findReposInOrganization(organizationName).then(async repos => {
         const issues = [];
         for (const repository of repos) {
-            issues.push(await findAll(organizationName, repository));
+            appendToArray(issues,await findAll(organizationName, repository));
         };
         return issues;
     });
+}
+
+function appendToArray(originalArray, newArray) {
+    for (const newItem of newArray) {
+        originalArray.push(newItem);
+    }
 }
 
 module.exports.convertToDTO = convertToDTO;
