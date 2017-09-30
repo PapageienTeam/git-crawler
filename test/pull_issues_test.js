@@ -18,7 +18,7 @@ test('Throws exception on invalid issue state', () => {
     expect(() => pullIssues.convertIssueState('INVALID')).toThrow();
 })
 
-test('Converts a single issue correctly', () => {
+test('Converts a single unassigned issue correctly', () => {
     const title = "I'm a bug!";
     const url = "https://url.com";
     const githubState = "open";
@@ -33,9 +33,46 @@ test('Converts a single issue correctly', () => {
             login: issueCreator,
         },
     }; 
-    const dto = {title: title, status: pullIssues.convertIssueState(githubState), url: url, github_id: idNumber, creator: issueCreator};
+    const dto = {
+        title: title, 
+        status: pullIssues.convertIssueState(githubState), 
+        url: url, 
+        github_id: idNumber, 
+        creator: issueCreator,
+        assignee: null,
+    };
     expect(pullIssues.convertToDTO(githubApiResponse)).toEqual(dto);
 })
+
+test('Converts a single assigned issue correctly', () => {
+    const title = "Frog is red";
+    const url = 'https://redfrogs.com';
+    const githubState = 'open';
+    const idNumber = 561;
+    const issueCreator = 'testUser2';
+    const issueAssignee = 'testAssignee95';
+    const githubApiResponse = {
+        number: idNumber,
+        state: githubState,
+        html_url: url,
+        title: title,
+        user: {
+            login: issueCreator,
+        },
+        assignee: {
+            login: issueAssignee,
+        },
+    };
+    const dto = {
+        title: title,
+        status: pullIssues.convertIssueState(githubState),
+        url: url,
+        github_id: idNumber,
+        creator: issueCreator,
+        assignee: issueAssignee,
+    }
+    expect(pullIssues.convertToDTO(githubApiResponse)).toEqual(dto);
+});
 
 test('Converts multiple issues correctly', () => {
     const firstIssueNumber = 5;
@@ -81,6 +118,7 @@ test('Converts multiple issues correctly', () => {
             url: firstUrl,
             github_id: firstIssueNumber,
             creator: firstCreator,
+            assignee: null,
         },
         {
             title: secondTitle,
@@ -88,6 +126,7 @@ test('Converts multiple issues correctly', () => {
             url: secondUrl,
             github_id: secondIssueNumber,
             creator: secondCreator,
+            assignee: null,
         }
     ]
 
