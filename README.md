@@ -1,10 +1,11 @@
-#Git-bot for Slack
+# Git-bot for Slack
 
+## Install
+npm i
 
-
-##Run bot
+## Run bot
 npm start
 
 
-##Run tests
+## Run tests
 npm test
