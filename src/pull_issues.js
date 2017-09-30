@@ -1,5 +1,13 @@
 'use strict';
 const GitHubApi = require('github');
+const fsExtra = require('fs-extra');
+
+function getGithubApiContext() {
+    const client = new GitHubApi({debug: false});
+    const config = fsExtra.readJsonSync('./authentication.json');
+    client.authenticate({type: 'oauth', key: config.username, secret: config.PAT});
+    return client;
+}
 
 function convertIssueState(githubFormattedState) {
     switch(githubFormattedState) {
@@ -43,7 +51,7 @@ function convertResponseToDTO(response) {
 }
 
 function findAll (organization, repo) {
-    const client = new GitHubApi({debug: false});
+    const client = getGithubApiContext();
     return client.issues.getForRepo({owner: organization, repo: repo}).then(response => {
         return convertResponseToDTO(response)
         });
@@ -58,7 +66,7 @@ function findReposInOrganizationResponse(githubResponse) {
 }
 
 function findReposInOrganization(organizationName) {
-    const client = new GitHubApi({debug: false});
+    const client = getGithubApiContext();
     return client.repos.getForOrg({org: organizationName}).then(response => {
         return findReposInOrganizationResponse(response.data);
     });

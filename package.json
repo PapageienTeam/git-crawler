@@ -28,6 +28,7 @@
     "rootDir": "."
   },
   "dependencies": {
+    "fs-extra": "^4.0.2",
     "git-bot": "github:PapageienTeam/git-bot",
     "github": "^11.0.0"
   }
