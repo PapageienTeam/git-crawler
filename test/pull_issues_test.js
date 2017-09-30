@@ -168,3 +168,24 @@ it.skip('Pulls any issues', () => {
         });
     })
 })
+
+it.skip('Finds all repos in an organization', () => {
+    expect.assertions(1);
+    return pullIssues.findReposInOrganization(testConsts.TEST_ORGANIZATION).then( result => {
+        expect(result).toContain('integration-test');
+    });
+})
+
+it.skip('Finds all issues in an organization', () => {
+    expect.assertions(1);
+    return pullIssues.findAllIssuesInOrganization(testConsts.TEST_ORGANIZATION).then(result => {
+        expect(result[0]).toContainEqual({
+            title: "Flamingos sollten grün sein!",
+            status: pullIssues.convertIssueState('open'),
+            url: 'https://github.com/PapageienTeam/integration-test/issues/1',
+            github_id: 1,
+            assignee: "mtp0",
+            creator: "mtp0",
+        });
+    });
+})
