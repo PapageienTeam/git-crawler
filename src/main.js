@@ -1,6 +1,7 @@
 'use strict';
 
 const gitBot = require('git-bot');
-const userMappingsHack = require('./user_mappings_hack');
+const databaseInsertion = require('./database_insertion');
 
-userMappingsHack.insertHardcodedMappings(gitBot.db);
+await gitBot.config_handler.loadConfig('config.json');
+databaseInsertion.nukeDatabaseAndWriteEverything();
