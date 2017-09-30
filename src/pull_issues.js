@@ -18,6 +18,7 @@ function convertToDTO(issue) {
         status: convertIssueState(issue.state),
         url: issue.html_url,
         github_id: issue.number,
+        creator: issue.user.login,
     }
 }
 

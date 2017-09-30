@@ -23,8 +23,17 @@ test('Converts a single issue correctly', () => {
     const url = "https://url.com";
     const githubState = "open";
     const idNumber = 5;
-    const githubApiResponse = {number: idNumber, state: githubState, html_url: url, title: title}; 
-    const dto = {title: title, status: pullIssues.convertIssueState(githubState), url: url, github_id: idNumber};
+    const issueCreator = 'testUser1';
+    const githubApiResponse = {
+        number: idNumber, 
+        state: githubState, 
+        html_url: url, 
+        title: title,
+        user: {
+            login: issueCreator,
+        },
+    }; 
+    const dto = {title: title, status: pullIssues.convertIssueState(githubState), url: url, github_id: idNumber, creator: issueCreator};
     expect(pullIssues.convertToDTO(githubApiResponse)).toEqual(dto);
 })
 
@@ -33,22 +42,30 @@ test('Converts multiple issues correctly', () => {
     const firstIssueState = "open";
     const firstUrl = "http://Url1.com";
     const firstTitle = "FunFlamingo";
+    const firstCreator = 'TestUser1';
     const firstApiResponse = {
         number: firstIssueNumber,
         state: firstIssueState,
         html_url: firstUrl,
         title: firstTitle,
+        user: {
+            login: firstCreator,
+        },
     }
 
     const secondIssueNumber = 6;
     const secondIssueState = "open";
     const secondUrl = "http://Url2.com";
     const secondTitle = "SadFlamingo";
+    const secondCreator = "SuperSadFlamingo99";
     const secondApiResponse = {
         number: secondIssueNumber,
         state: secondIssueState,
         html_url: secondUrl,
         title: secondTitle,
+        user: {
+            login: secondCreator,
+        }
     }
     const githubApiResponse = {
         "data": [
@@ -63,12 +80,14 @@ test('Converts multiple issues correctly', () => {
             status: pullIssues.convertIssueState(firstIssueState),
             url: firstUrl,
             github_id: firstIssueNumber,
+            creator: firstCreator,
         },
         {
             title: secondTitle,
             status: pullIssues.convertIssueState(secondIssueState),
             url: secondUrl,
             github_id: secondIssueNumber,
+            creator: secondCreator,
         }
     ]
 
