@@ -59,3 +59,7 @@ typings/
 
 # Secrets
 authentication.json
+# Hardcoded mapping between slack and github accounts.
+accounts.json
+/config.json
+
