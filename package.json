@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PapageienTeam/git-bot.git"
+    "url": "git+https://github.com/PapageienTeam/git-crawler.git"
   },
   "author": "PapageienTeam",
   "license": "BSD-3-Clause",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "fs-extra": "^4.0.2",
-    "git-bot": "github:PapageienTeam/git-bot",
+    "git-bot": "github:PapageienTeam/fix-bot",
     "github": "^11.0.0"
   }
 }
