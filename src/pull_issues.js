@@ -49,7 +49,16 @@ function findAll (organization, repo) {
         });
 }
 
+function findReposInOrganizationResponse(githubResponse) {
+    const foundRepos = []
+    for (const repository of githubResponse) {
+        foundRepos.push(repository.name);
+    }
+    return foundRepos;
+}
+
 module.exports.convertToDTO = convertToDTO;
 module.exports.findAll = findAll;
 module.exports.convertResponseToDTO = convertResponseToDTO;
 module.exports.convertIssueState = convertIssueState;
+module.exports.findReposInOrganizationResponse = findReposInOrganizationResponse;

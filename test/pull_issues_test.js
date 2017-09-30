@@ -133,6 +133,28 @@ test('Converts multiple issues correctly', () => {
     expect(pullIssues.convertResponseToDTO(githubApiResponse)).toEqual(expectDTOs)
 })
 
+test('Finds all repos in an organization', () => {
+    const firstRepoName = "FirstRepo";
+    const secondRepoName = "SecondRepoName";
+    const thirdRepoName = "ThirdRepoName";
+    const githubApiResponse = [
+        {
+            name: firstRepoName
+        },
+        {
+            name: secondRepoName
+        },
+        {
+            name: thirdRepoName
+        },
+    ]
+
+    expect(pullIssues.findReposInOrganizationResponse(githubApiResponse)).toEqual([
+        firstRepoName,
+        secondRepoName,
+        thirdRepoName,
+    ]);
+})
 
 // Integration test that hits rate limits on Travis.
 it.skip('Pulls any issues', () => {
