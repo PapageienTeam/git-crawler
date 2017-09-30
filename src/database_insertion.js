@@ -3,19 +3,19 @@
 const userMappingsHack = require('./user_mappings_hack');
 const pullIssues = require('./pull_issues'); 
 
-function nukeDatabase(database) {
-    database.clearAll();
+async function nukeDatabase(database) {
+    await database.clearAll();
 }
 
-function insertIssuesIntoCleanDatabase(database) {
-    for (const issue in pullIssues.findAllIssuesInOrganization(process.env.GIT_ORGANIZATION)) {
-        database.issue.add(issue);
+async function insertIssuesIntoCleanDatabase(database) {
+    for (const issue in await pullIssues.findAllIssuesInOrganization(process.env.GIT_ORGANIZATION)) {
+        await database.issue.add(issue);
     }
 }
 
-function nukeDatabaseAndWriteEverything(database) {
-    nukeDatabase(database);
-    insertIssuesIntoCleanDatabase(database);
+async function nukeDatabaseAndWriteEverything(database) {
+    await nukeDatabase(database);
+    await insertIssuesIntoCleanDatabase(database);
 }
 
 module.exports = {

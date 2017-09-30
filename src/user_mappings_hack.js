@@ -2,10 +2,10 @@
 
 const fsExtra = require('fs-extra');
 
-function insertHardcodedMappings(database) {
+async function insertHardcodedMappings(database) {
     const userMappings = fsExtra.readJSONSync('./accounts.json');
     for (const userMapping in userMappings) {
-        database.user.add(userMapping);
+        await database.user.add(userMapping);
     }
 }
 
