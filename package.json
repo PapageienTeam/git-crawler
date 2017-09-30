@@ -26,5 +26,8 @@
     },
     "testRegex": "./test/.*.js$",
     "rootDir": "."
+  },
+  "dependencies": {
+    "github": "^11.0.0"
   }
 }
