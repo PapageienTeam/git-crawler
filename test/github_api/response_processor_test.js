@@ -15,13 +15,13 @@ test('Throws exception on invalid issue state', () => {
     expect(() => responseProcessor.convertIssueState('INVALID')).toThrow();
 })
 
-test('Converts a single unassigned issue correctly', () => {
+function createUnassignedIssueResponse() {
     const title = "I'm a bug!";
-    const url = "https://url.com";
+    const url = "https://www.example.com";
     const githubState = "open";
     const idNumber = 5;
     const issueCreator = 'testUser1';
-    const githubApiResponse = {
+    const githubResponse = {
         number: idNumber, 
         state: githubState, 
         html_url: url, 
@@ -29,8 +29,9 @@ test('Converts a single unassigned issue correctly', () => {
         user: {
             login: issueCreator,
         },
-    }; 
-    const dto = {
+    };
+
+    const expected = {
         title: title, 
         status: responseProcessor.convertIssueState(githubState), 
         url: url, 
@@ -38,103 +39,45 @@ test('Converts a single unassigned issue correctly', () => {
         creator: issueCreator,
         assignee: null,
     };
-    expect(responseProcessor.convertToDTO(githubApiResponse)).toEqual(dto);
-})
 
-test('Converts a single assigned issue correctly', () => {
-    const title = "Frog is red";
-    const url = 'https://redfrogs.com';
-    const githubState = 'open';
-    const idNumber = 561;
-    const issueCreator = 'testUser2';
+    return {githubResponse, expected};
+}
+
+function createAssignedIssueResponse() {
+    var githubResponse, expected;
+    ({githubResponse, expected} = createUnassignedIssueResponse());
+
     const issueAssignee = 'testAssignee95';
-    const githubApiResponse = {
-        number: idNumber,
-        state: githubState,
-        html_url: url,
-        title: title,
-        user: {
-            login: issueCreator,
-        },
-        assignee: {
-            login: issueAssignee,
-        },
+    githubResponse.assignee = {
+        login: issueAssignee,
     };
-    const dto = {
-        title: title,
-        status: responseProcessor.convertIssueState(githubState),
-        url: url,
-        github_id: idNumber,
-        creator: issueCreator,
-        assignee: issueAssignee,
-    }
-    expect(responseProcessor.convertToDTO(githubApiResponse)).toEqual(dto);
-});
+    expected.assignee = issueAssignee;
 
-test('Converts multiple issues correctly', () => {
-    const firstIssueNumber = 5;
-    const firstIssueState = "open";
-    const firstUrl = "http://Url1.com";
-    const firstTitle = "FunFlamingo";
-    const firstCreator = 'TestUser1';
-    const firstApiResponse = {
-        number: firstIssueNumber,
-        state: firstIssueState,
-        html_url: firstUrl,
-        title: firstTitle,
-        user: {
-            login: firstCreator,
+    return {githubResponse, expected};
+}
+
+function createMultipleIssueResponses() {
+    var firstResponse = createAssignedIssueResponse();
+    var secondResponse = createUnassignedIssueResponse();
+    return {
+        githubResponse: {
+            data: [
+                firstResponse.githubResponse,
+                secondResponse.githubResponse,
+            ]
         },
-    }
+        expected: [
+            firstResponse.expected,
+            secondResponse.expected,
+        ],
+    };
+}
 
-    const secondIssueNumber = 6;
-    const secondIssueState = "open";
-    const secondUrl = "http://Url2.com";
-    const secondTitle = "SadFlamingo";
-    const secondCreator = "SuperSadFlamingo99";
-    const secondApiResponse = {
-        number: secondIssueNumber,
-        state: secondIssueState,
-        html_url: secondUrl,
-        title: secondTitle,
-        user: {
-            login: secondCreator,
-        }
-    }
-    const githubApiResponse = {
-        "data": [
-            firstApiResponse,
-            secondApiResponse,
-        ]
-    }
-
-    const expectDTOs = [
-        {
-            title: firstTitle,
-            status: responseProcessor.convertIssueState(firstIssueState),
-            url: firstUrl,
-            github_id: firstIssueNumber,
-            creator: firstCreator,
-            assignee: null,
-        },
-        {
-            title: secondTitle,
-            status: responseProcessor.convertIssueState(secondIssueState),
-            url: secondUrl,
-            github_id: secondIssueNumber,
-            creator: secondCreator,
-            assignee: null,
-        }
-    ]
-
-    expect(responseProcessor.convertResponseToDTO(githubApiResponse)).toEqual(expectDTOs)
-})
-
-test('Finds all repos in an organization', () => {
+function createFindRepoResponse() {
     const firstRepoName = "FirstRepo";
     const secondRepoName = "SecondRepoName";
     const thirdRepoName = "ThirdRepoName";
-    const githubApiResponse = [
+    const githubResponse = [
         {
             name: firstRepoName
         },
@@ -144,11 +87,35 @@ test('Finds all repos in an organization', () => {
         {
             name: thirdRepoName
         },
-    ]
-
-    expect(responseProcessor.findReposInOrganizationResponse(githubApiResponse)).toEqual([
+    ];
+    const expected = [
         firstRepoName,
         secondRepoName,
         thirdRepoName,
-    ]);
+    ];
+    return {githubResponse, expected};
+}
+
+test('Converts a single unassigned issue correctly', () => {
+    var githubResponse, expected; 
+    ({githubResponse, expected} = createUnassignedIssueResponse());
+    expect(responseProcessor.convertToDTO(githubResponse)).toEqual(expected);
+});
+
+test('Converts a single assigned issue correctly', () => {
+    var githubResponse, expected;
+    ({githubResponse, expected} = createAssignedIssueResponse());
+    expect(responseProcessor.convertToDTO(githubResponse)).toEqual(expected);
+});
+
+test('Converts multiple issues correctly', () => {
+    var githubResponse, expected;
+    ({githubResponse, expected} = createMultipleIssueResponses());
+    expect(responseProcessor.convertResponseToDTO(githubResponse)).toEqual(expected);
+})
+
+test('Finds all repos in an organization', () => {
+    var githubResponse, expected;
+    ({githubResponse, expected} = createFindRepoResponse());
+    expect(responseProcessor.findReposInOrganizationResponse(githubResponse)).toEqual(expected);
 })
