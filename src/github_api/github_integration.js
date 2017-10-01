@@ -35,8 +35,5 @@ function findAllIssuesInOrganization(organizationName) {
 }
 
 module.exports = {
-    getGithubApiContext,
-    findAll,
-    findReposInOrganization,
     findAllIssuesInOrganization,
 }
