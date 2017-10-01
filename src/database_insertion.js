@@ -1,14 +1,14 @@
 'use strict';
 
 const userMappingsHack = require('./user_mappings_hack');
-const pullIssues = require('./pull_issues'); 
+const githubIntegration = require('./github_api/github_integration'); 
 
 async function nukeDatabase(database) {
     await database.clearAll();
 }
 
 async function insertIssuesIntoCleanDatabase(database) {
-    const issues = await pullIssues.findAllIssuesInOrganization(process.env.GIT_ORGANIZATION)
+    const issues = await githubIntegration.findAllIssuesInOrganization(process.env.GIT_ORGANIZATION)
     for (const issue of issues) {
         await database.issue.add(issue);
     }
