@@ -1,7 +1,7 @@
 'use strict';
 
-TEST_ORGANIZATION = "PapageienTeam";
-TEST_REPO = "integration-test";
+const TEST_ORGANIZATION = "PapageienTeam";
+const TEST_REPO = "integration-test";
 
 // Integration test that hits rate limits on Travis.
 it.skip('Pulls any issues', () => {
