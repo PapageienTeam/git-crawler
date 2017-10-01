@@ -1,7 +1,6 @@
 'use strict';
 
 const responseProcessor = require('../../src/github_api/response_processors')
-const testConsts = require('../test_consts')
 
 test('Converts open issue state correctly', () => {
     expect(responseProcessor.convertIssueState('open')).toBe(0);
