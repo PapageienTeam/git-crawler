@@ -1,21 +1,18 @@
 'use strict';
 
-//TODO: CONVERT "OPEN" TO 0
-
-const github = require('github')
-const pullIssues = require('../src/pull_issues')
-const testConsts = require('./test_consts')
+const responseProcessor = require('../../src/github_api/response_processors')
+const testConsts = require('../test_consts')
 
 test('Converts open issue state correctly', () => {
-    expect(pullIssues.convertIssueState('open')).toBe(0);
+    expect(responseProcessor.convertIssueState('open')).toBe(0);
 })
 
 test('Converts closed issue state correctly', () => {
-    expect(pullIssues.convertIssueState('closed')).toBe(1);
+    expect(responseProcessor.convertIssueState('closed')).toBe(1);
 })
 
 test('Throws exception on invalid issue state', () => {
-    expect(() => pullIssues.convertIssueState('INVALID')).toThrow();
+    expect(() => responseProcessor.convertIssueState('INVALID')).toThrow();
 })
 
 test('Converts a single unassigned issue correctly', () => {
@@ -35,13 +32,13 @@ test('Converts a single unassigned issue correctly', () => {
     }; 
     const dto = {
         title: title, 
-        status: pullIssues.convertIssueState(githubState), 
+        status: responseProcessor.convertIssueState(githubState), 
         url: url, 
         github_id: idNumber, 
         creator: issueCreator,
         assignee: null,
     };
-    expect(pullIssues.convertToDTO(githubApiResponse)).toEqual(dto);
+    expect(responseProcessor.convertToDTO(githubApiResponse)).toEqual(dto);
 })
 
 test('Converts a single assigned issue correctly', () => {
@@ -65,13 +62,13 @@ test('Converts a single assigned issue correctly', () => {
     };
     const dto = {
         title: title,
-        status: pullIssues.convertIssueState(githubState),
+        status: responseProcessor.convertIssueState(githubState),
         url: url,
         github_id: idNumber,
         creator: issueCreator,
         assignee: issueAssignee,
     }
-    expect(pullIssues.convertToDTO(githubApiResponse)).toEqual(dto);
+    expect(responseProcessor.convertToDTO(githubApiResponse)).toEqual(dto);
 });
 
 test('Converts multiple issues correctly', () => {
@@ -114,7 +111,7 @@ test('Converts multiple issues correctly', () => {
     const expectDTOs = [
         {
             title: firstTitle,
-            status: pullIssues.convertIssueState(firstIssueState),
+            status: responseProcessor.convertIssueState(firstIssueState),
             url: firstUrl,
             github_id: firstIssueNumber,
             creator: firstCreator,
@@ -122,7 +119,7 @@ test('Converts multiple issues correctly', () => {
         },
         {
             title: secondTitle,
-            status: pullIssues.convertIssueState(secondIssueState),
+            status: responseProcessor.convertIssueState(secondIssueState),
             url: secondUrl,
             github_id: secondIssueNumber,
             creator: secondCreator,
@@ -130,7 +127,7 @@ test('Converts multiple issues correctly', () => {
         }
     ]
 
-    expect(pullIssues.convertResponseToDTO(githubApiResponse)).toEqual(expectDTOs)
+    expect(responseProcessor.convertResponseToDTO(githubApiResponse)).toEqual(expectDTOs)
 })
 
 test('Finds all repos in an organization', () => {
@@ -149,45 +146,9 @@ test('Finds all repos in an organization', () => {
         },
     ]
 
-    expect(pullIssues.findReposInOrganizationResponse(githubApiResponse)).toEqual([
+    expect(responseProcessor.findReposInOrganizationResponse(githubApiResponse)).toEqual([
         firstRepoName,
         secondRepoName,
         thirdRepoName,
     ]);
-})
-
-// Integration test that hits rate limits on Travis.
-it.skip('Pulls any issues', () => {
-    expect.assertions(1);
-    return pullIssues.findAll(testConsts.TEST_ORGANIZATION, testConsts.TEST_REPO).then(result => {
-        expect(result).toContainEqual({
-            title: "Flamingos sollten grün sein!",
-            status: pullIssues.convertIssueState('open'),
-            url: 'https://github.com/PapageienTeam/integration-test/issues/1',
-            github_id: 1,
-            assignee: 'mpt0',
-            creator: 'mpt0'
-        });
-    })
-})
-
-it.skip('Finds all repos in an organization', () => {
-    expect.assertions(1);
-    return pullIssues.findReposInOrganization(testConsts.TEST_ORGANIZATION).then( result => {
-        expect(result).toContain('integration-test');
-    });
-})
-
-it.skip('Finds all issues in an organization', () => {
-    expect.assertions(1);
-    return pullIssues.findAllIssuesInOrganization(testConsts.TEST_ORGANIZATION).then(result => {
-        expect(result[0]).toContainEqual({
-            title: "Flamingos sollten grün sein!",
-            status: pullIssues.convertIssueState('open'),
-            url: 'https://github.com/PapageienTeam/integration-test/issues/1',
-            github_id: 1,
-            assignee: "mpt0",
-            creator: "mpt0",
-        });
-    });
 })
